@@ -9,6 +9,7 @@
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
 
     <link rel='stylesheet' href='http://fonts.googleapis.com/css?family=Roboto:400,500,700,400italic'>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="../node_modules/angular-material/angular-material.css"/>
     <link rel="stylesheet" href="assets/app.css"/>
 
@@ -64,6 +65,64 @@
           <md-tooltip>Contact {{ ul.selected.name }}</md-tooltip>
           <md-icon md-svg-icon="share"></md-icon>
         </md-button>
+
+        <div layout="column" ng-controller="listaDeCosasController">
+          <h1 layout="column" layout-align="center center">{{"Las Cosas Que Tengo Que Hacer" | uppercase}}</h1>
+          <div>
+            <div>
+              <form layout="column" layout-align="center center" ng-submit="agregarCosa()" name="agregarCosaForm" novalidate>
+                  <md-input-container>
+                    <label>¿Qué tienes que hacer?</label>
+                    <input type="text" name="agregarCosaInput" class="form-control" ng-model="cosaNueva" minlength="5" md-maxlength="20">
+                    <div ng-messages="agregarCosaForm.agregarCosaInput.$error">
+                      <div ng-message="minlength">Debe contener por lo menos 5 caracteres</div>
+                      <div ng-message="md-maxlength">No puede tener más de 20 caracteres</div>
+                    </div>
+                  </md-input-container>
+
+              </form>
+
+              <p layout="column" layout-align="center center">¡Me quedan {{listaDeCosas | sinCompletar }} cosas por hacer!</p>
+
+              <div layout="column" layout-align="center center" layout-margin>
+
+                <md-input-container>
+                    <label>Buscar Cosa...</label>
+                    <input type="text" id="filtroParaBuscar" class="form-control" ng-model="buscarCosa">
+                  </md-input-container>
+                  <md-button class="md-raised" ng-click="buscarCosa = ''">Borrar Filtro</md-button>
+
+              </div>
+
+              <md-content layout="row" layout-wrap>
+                <!-- Le indicamos a la directiva ng-repeat que queremos que filtre los elementos con base en el valor de "buscarCosa" -->
+                <md-card ng-class="{'completada' : cosa.completada}" ng-repeat="cosa in listaDeCosas| filter:buscarCosa" flex="25" layout="row" layout-align="center center">
+                  <md-card-content flex>
+                    <p>{{cosa.tarea}}</p>
+                  </md-card-content>
+                  <md-card-actions flex="20" layout="column" layout-align="center center">
+                    <md-button class="md-icon-button botonAccion" ng-click="eliminar(cosa)">
+                      <md-icon>delete</md-icon>
+                      <md-tooltip md-direction="bottom">
+                        Eliminar
+                      </md-tooltip>
+                    </md-button>
+
+                    <md-button class="md-icon-button botonAccion"  ng-disabled="cosa.completada" ng-click="completar(cosa)">
+                      <md-icon>check_circle</md-icon>
+                      <md-tooltip md-direction="bottom">
+                        Completar
+                      </md-tooltip>
+                    </md-button>
+                  </md-card-actions>
+                </md-card>
+              </md-content>
+
+
+            </div>
+          </div>
+        </div>
+
       </md-content>
 
   </div>
@@ -72,15 +131,19 @@
     <script src="../node_modules/angular-animate/angular-animate.js"></script>
     <script src="../node_modules/angular-aria/angular-aria.js"></script>
     <script type="text/javascript" src="../node_modules/angular-material/angular-material.js"></script>
+     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-messages.min.js"></script>
 
     <script src="./src/users/Users.js"></script>
     <script src="./src/users/UserController.js"></script>
     <script src="./src/users/UserService.js"></script>
 
+    <script src="./src/users/listaDeCosasController.js"></script>
+    <script src="./src/users/UserFilter.js"></script>
+
     <script type="text/javascript">
 
           angular
-              .module('starterApp', ['ngMaterial', 'users'])
+              .module('starterApp', ['ngMaterial', 'users', 'listaDeCosas', 'ngMessages'])
               .config(function($mdThemingProvider, $mdIconProvider){
 
                   $mdIconProvider
